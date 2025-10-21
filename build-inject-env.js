@@ -28,7 +28,8 @@ function processHtmlFile(filePath, fileName) {
 
     // Add cache-busting parameter to script tags
     content = content.replace(/contact-widget\.js(\?v=\d+)?/g, `contact-widget.js?v=${timestamp}`);
-    console.log(`Added cache-busting parameter to contact-widget.js references in ${fileName}`);
+    content = content.replace(/contact-widget\.min\.js(\?v=\d+)?/g, `contact-widget.min.js?v=${timestamp}`);
+    console.log(`Added cache-busting parameter to contact-widget script references in ${fileName}`);
 
     // Replace placeholder URLs with actual Netlify site URL
     if (netlifyUrl) {
@@ -44,12 +45,12 @@ function processHtmlFile(filePath, fileName) {
     return fileName;
 }
 
-// Process contact-widget.js file
-const widgetPath = path.join(__dirname, 'public', 'contact-widget.js');
-let widgetContent = fs.readFileSync(widgetPath, 'utf8');
+// Function to process JavaScript files (both original and minified)
+function processJsFile(filePath, fileName) {
+    let content = fs.readFileSync(filePath, 'utf8');
 
-// Replace the environment variable detection with actual values
-const envInjection = `
+    // Replace the environment variable detection with actual values
+    const envInjection = `
             // Netlify environment variables injected at build time
             const netlifySiteUrl = '${netlifyUrl || ''}';
             
@@ -63,26 +64,51 @@ const envInjection = `
             return 'NETLIFY_SITE_URL_NOT_DETECTED/.netlify/functions/submit-contact';
 `;
 
-// Replace CAPTCHA site key injection
-const captchaInjection = `
+    // Replace CAPTCHA site key injection
+    const captchaInjection = `
             // CAPTCHA site key injected at build time
             return '${recaptchaSiteKey}';
 `;
 
-// Replace the entire apiUrl function content - updated regex to match current structure
-widgetContent = widgetContent.replace(
-    /apiUrl: \(\(\) => \{[\s\S]*?\}\)\(\),/,
-    `apiUrl: (() => {${envInjection}})(),`
-);
+    // Replace the entire apiUrl function content - updated regex to match current structure
+    content = content.replace(
+        /apiUrl: \(\(\) => \{[\s\S]*?\}\)\(\),/,
+        `apiUrl: (() => {${envInjection}})(),`
+    );
 
-// Replace CAPTCHA site key function content - more specific pattern
-widgetContent = widgetContent.replace(
-    /captchaSiteKey: \(\(\) => \{[\s\S]*?return '';[\s\S]*?\}\)\(\),/,
-    `captchaSiteKey: (() => {${captchaInjection}})(),`
-);
+    // Replace CAPTCHA site key function content - more specific pattern
+    content = content.replace(
+        /captchaSiteKey: \(\(\) => \{[\s\S]*?return '';[\s\S]*?\}\)\(\),/,
+        `captchaSiteKey: (() => {${captchaInjection}})(),`
+    );
 
-// Write the updated widget file
-fs.writeFileSync(widgetPath, widgetContent);
+    // Write the updated file
+    fs.writeFileSync(filePath, content);
+    console.log(`Environment variables injected into ${fileName}`);
+    return fileName;
+}
+
+// Process both contact-widget.js and contact-widget.min.js files
+const jsFiles = [
+    { path: path.join(__dirname, 'public', 'contact-widget.js'), name: 'contact-widget.js' },
+    { path: path.join(__dirname, 'public', 'contact-widget.min.js'), name: 'contact-widget.min.js' }
+];
+
+const processedFiles = [];
+
+// Process each JavaScript file
+jsFiles.forEach(file => {
+    try {
+        if (fs.existsSync(file.path)) {
+            const fileName = processJsFile(file.path, file.name);
+            processedFiles.push(fileName);
+        } else {
+            console.log(`Skipping ${file.name} - file not found`);
+        }
+    } catch (error) {
+        console.error(`Error processing ${file.name}:`, error.message);
+    }
+});
 
 // Process HTML files
 const htmlFiles = [
@@ -90,7 +116,7 @@ const htmlFiles = [
     { path: path.join(__dirname, 'public', 'example.html'), name: 'example.html' }
 ];
 
-const processedFiles = ['contact-widget.js'];
+// processedFiles is already initialized above
 
 // Process each HTML file
 htmlFiles.forEach(file => {
