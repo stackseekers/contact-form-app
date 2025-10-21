@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Test - Newsletter Custom Text</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'sans-serif'],
+                        'mono': ['Monaco', 'Menlo', 'Ubuntu Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+        <!-- Content -->
+        <div class="p-4 md:p-4">
+            <script src="contact-widget.js"></script>
+            <div id="my-contact-form"></div>
+            <script>
+                new ContactWidget("#my-contact-form", {
+                    fields: {
+                        name: { enabled: true, required: true },
+                        email: { enabled: true, required: true },
+                        message: { enabled: true, required: true },
+                        newsletter: {
+                            enabled: true,
+                            required: false,
+                            customText: 'Join our awesome newsletter!'
+                        }
+                    }
+                });
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>
