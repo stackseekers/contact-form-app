@@ -6,48 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Form Widget - Minified Version Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .demo-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .badge-minified {
-            background: linear-gradient(45deg, #10b981, #059669);
-            color: white;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .code-snippet {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 16px;
-            border-radius: 8px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 14px;
-            overflow-x: auto;
-            margin: 12px 0;
-        }
-
-        .highlight {
-            background: rgba(16, 185, 129, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #059669;
-            font-weight: 600;
-        }
-    </style>
 </head>
 
 <body class="p-8">
@@ -64,14 +22,10 @@
                     <h2 class="text-2xl font-bold text-gray-800">Live Demo</h2>
                 </div>
                 <div data-contact-widget></div>
+                <!-- Load the contact widget -->
+                <script src="contact-widget.js"></script>
             </div>
         </div>
-
     </div>
-
-    <!-- Load the contact widget -->
-    <script src="contact-widget.js?v=1761060845452"></script>
-
 </body>
-
 </html>
