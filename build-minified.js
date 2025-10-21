@@ -11,12 +11,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Check build mode from arguments or environment
-const isDevMode = process.argv.includes('--dev') || process.env.BUILD_MODE === 'dev';
-const isMinifiedMode = process.argv.includes('--minified') || process.env.BUILD_MODE === 'minified';
-
 console.log('🚀 Contact Form Widget Build Script');
-console.log(`Mode: ${isDevMode ? 'Development' : isMinifiedMode ? 'Minified Production' : 'Production'}`);
+console.log('Mode: Minified Production Only');
 console.log('=====================================\n');
 
 // Netlify environment variables
@@ -77,8 +73,8 @@ function processJsFile(filePath, fileName) {
 function processHtmlFile(filePath, fileName) {
     let content = fs.readFileSync(filePath, 'utf8');
 
-    // Determine which script to use based on build mode
-    const scriptFile = isMinifiedMode ? 'contact-widget.min.js' : 'contact-widget.js';
+    // Always use contact-widget.js (now minified)
+    const scriptFile = 'contact-widget.js';
 
     // Add cache-busting parameter to script tags
     content = content.replace(/contact-widget\.js(\?v=\d+)?/g, `${scriptFile}?v=${timestamp}`);
@@ -98,58 +94,32 @@ function processHtmlFile(filePath, fileName) {
     return fileName;
 }
 
-// Process JavaScript files
-const jsFiles = [
-    { path: path.join(__dirname, 'public', 'contact-widget.js'), name: 'contact-widget.js' },
-    { path: path.join(__dirname, 'public', 'contact-widget.min.js'), name: 'contact-widget.min.js' }
-];
+// Process JavaScript file (minified only)
+const jsFile = { path: path.join(__dirname, 'public', 'contact-widget.js'), name: 'contact-widget.js' };
 
 const processedFiles = [];
 
-// Process each JavaScript file
-jsFiles.forEach(file => {
-    try {
-        if (fs.existsSync(file.path)) {
-            const fileName = processJsFile(file.path, file.name);
-            processedFiles.push(fileName);
-        } else {
-            console.log(`⚠️  Skipping ${file.name} - file not found`);
-        }
-    } catch (error) {
-        console.error(`❌ Error processing ${file.name}:`, error.message);
+// Process the JavaScript file
+try {
+    if (fs.existsSync(jsFile.path)) {
+        const fileName = processJsFile(jsFile.path, jsFile.name);
+        processedFiles.push(fileName);
+    } else {
+        console.log(`⚠️  Skipping ${jsFile.name} - file not found`);
     }
-});
-
-// Handle Netlify function replacement
-const originalFunctionPath = path.join(__dirname, 'netlify', 'functions', 'submit-contact.js');
-const minifiedFunctionPath = path.join(__dirname, 'netlify', 'functions', 'submit-contact-min.js');
-
-if (!isDevMode && fs.existsSync(minifiedFunctionPath)) {
-    try {
-        // Backup original file
-        const backupPath = path.join(__dirname, 'netlify', 'functions', 'submit-contact.js.backup');
-        if (fs.existsSync(originalFunctionPath)) {
-            fs.copyFileSync(originalFunctionPath, backupPath);
-            console.log('✅ Original submit-contact.js backed up');
-        }
-
-        // Replace with minified version
-        fs.copyFileSync(minifiedFunctionPath, originalFunctionPath);
-        console.log('✅ Replaced submit-contact.js with minified version');
-        processedFiles.push('submit-contact.js (minified)');
-    } catch (error) {
-        console.error('❌ Error replacing function with minified version:', error.message);
-    }
-} else if (isDevMode) {
-    console.log('🔧 Development mode: Using original submit-contact.js');
-} else {
-    console.log('⚠️  Minified function not found, using original submit-contact.js');
+} catch (error) {
+    console.error(`❌ Error processing ${jsFile.name}:`, error.message);
 }
+
+// Function is already minified - no replacement needed
+console.log('✅ Using minified submit-contact.js');
+processedFiles.push('submit-contact.js (minified)');
 
 // Process HTML files
 const htmlFiles = [
     { path: path.join(__dirname, 'public', 'index.html'), name: 'index.html' },
-    { path: path.join(__dirname, 'public', 'example.html'), name: 'example.html' }
+    { path: path.join(__dirname, 'public', 'example.html'), name: 'example.html' },
+    { path: path.join(__dirname, 'public', 'example-minified.html'), name: 'example-minified.html' }
 ];
 
 // Process each HTML file
@@ -168,26 +138,11 @@ console.log('==================');
 console.log(`✅ Files processed: ${processedFiles.length}`);
 processedFiles.forEach(file => console.log(`   - ${file}`));
 
-if (isMinifiedMode) {
-    console.log('\n🎯 Minified Production Build Complete!');
-    console.log('   - Using contact-widget.min.js');
-    console.log('   - Using submit-contact.min.js');
-    console.log('   - Optimized for production deployment');
-} else if (isDevMode) {
-    console.log('\n🔧 Development Build Complete!');
-    console.log('   - Using original files for debugging');
-    console.log('   - Environment variables injected');
-} else {
-    console.log('\n🚀 Production Build Complete!');
-    console.log('   - Using minified backend function');
-    console.log('   - Environment variables injected');
-}
+console.log('\n🎯 Minified Production Build Complete!');
+console.log('   - Using minified contact-widget.js');
+console.log('   - Using minified submit-contact.js');
+console.log('   - Optimized for production deployment');
 
 console.log('\n📝 Next Steps:');
-if (isMinifiedMode) {
-    console.log('   - Deploy with: npm run deploy');
-    console.log('   - Test locally: npm run dev');
-} else {
-    console.log('   - Deploy with: npm run deploy');
-    console.log('   - For minified build: npm run build -- --minified');
-}
+console.log('   - Deploy with: npm run deploy');
+console.log('   - Test locally: npm run dev');

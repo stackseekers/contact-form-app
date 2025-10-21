@@ -6,11 +6,8 @@
   "scripts": {
     "dev": "netlify dev",
     "build": "node build-minified.js",
-    "build:dev": "node build-minified.js --dev",
-    "build:minified": "node build-minified.js --minified",
-    "restore": "node -e \"const fs=require('fs');const path=require('path');const backup=path.join(__dirname,'netlify/functions/submit-contact.js.backup');const original=path.join(__dirname,'netlify/functions/submit-contact.js');if(fs.existsSync(backup)){fs.copyFileSync(backup,original);console.log('Restored original submit-contact.js');}else{console.log('No backup found');}\"",
-    "deploy": "npm run build && netlify deploy --prod",
-    "deploy:minified": "npm run build:minified && netlify deploy --prod"
+    "restore": "echo 'No restore needed - using minified version only'",
+    "deploy": "npm run build && netlify deploy --prod"
   },
   "keywords": ["contact-form", "widget", "notion", "netlify", "embed"],
   "author": "",

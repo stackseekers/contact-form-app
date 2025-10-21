@@ -45,36 +45,25 @@
 # Redirects for clean URLs
 [[redirects]]
   from = "/widget"
-  to = "/contact-widget.min.js"
+  to = "/contact-widget.js"
   status = 302
   force = false
 
 [[redirects]]
   from = "/widget.js"
-  to = "/contact-widget.min.js"
+  to = "/contact-widget.js"
   status = 302
   force = false
 
-# Environment configuration for different contexts
+# Environment configuration for all contexts (minified only)
 [context.dev.environment]
-  NODE_ENV = "development"
-  BUILD_MODE = "dev"
+  NODE_ENV = "production"
 
 [context.branch-deploy.environment]
-  NODE_ENV = "development"
-  BUILD_MODE = "dev"
+  NODE_ENV = "production"
 
 [context.deploy-preview.environment]
   NODE_ENV = "production"
-  BUILD_MODE = "production"
 
 [context.production.environment]
   NODE_ENV = "production"
-  BUILD_MODE = "minified"
-
-# Build settings for different contexts
-[context.dev.build]
-  command = "npm run build:dev"
-
-[context.production.build]
-  command = "npm run build:minified"
