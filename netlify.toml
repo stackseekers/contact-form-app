@@ -1,0 +1,22 @@
+[build]
+  functions = "netlify/functions"
+  publish = "public"
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Requested-With"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Max-Age = "86400"
+
+# Environment configuration for development
+[context.dev.environment]
+  NODE_ENV = "development"
+
+[context.production.environment]
+  NODE_ENV = "production"

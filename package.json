@@ -1,0 +1,19 @@
+{
+  "name": "contact-form-widget",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "node build-inject-env.js",
+    "deploy": "netlify deploy --prod"
+  },
+  "keywords": ["contact-form", "widget", "notion", "netlify", "embed"],
+  "author": "",
+  "license": "ISC",
+  "description": "A lightweight contact form widget that can be embedded on any website and sends data to Notion database",
+  "dependencies": {},
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
