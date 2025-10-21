@@ -3,16 +3,18 @@
 
     const DEFAULT_CONFIG = {
         apiUrl: (() => {
-            const netlifySiteUrl = '{{NETLIFY_SITE_URL}}';
-
+            // Netlify environment variables injected at build time
+            const netlifySiteUrl = '';
+            
             if (netlifySiteUrl) {
                 console.log('Netlify site URL from build injection:', netlifySiteUrl);
                 return netlifySiteUrl + '/.netlify/functions/submit-contact';
             }
-
+            
+            // Error case - no environment variables available
             console.error('Could not detect Netlify site URL. Make sure the build process injected the environment variables.');
             return 'NETLIFY_SITE_URL_NOT_DETECTED/.netlify/functions/submit-contact';
-        })(),
+})(),
 
         // Widget styling options
         theme: {

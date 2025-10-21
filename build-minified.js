@@ -122,7 +122,7 @@ jsFiles.forEach(file => {
 
 // Handle Netlify function replacement
 const originalFunctionPath = path.join(__dirname, 'netlify', 'functions', 'submit-contact.js');
-const minifiedFunctionPath = path.join(__dirname, 'netlify', 'functions', 'submit-contact.min.js');
+const minifiedFunctionPath = path.join(__dirname, 'netlify', 'functions', 'submit-contact-min.js');
 
 if (!isDevMode && fs.existsSync(minifiedFunctionPath)) {
     try {
