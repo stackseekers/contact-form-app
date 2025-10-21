@@ -19,7 +19,32 @@ console.log('Injecting Netlify environment variables...');
 console.log('NETLIFY_URL:', netlifyUrl);
 console.log('RECAPTCHA_SITE_KEY:', recaptchaSiteKey ? '[SET]' : '[NOT SET]');
 
-// Read the contact-widget.js file
+// Generate timestamp for cache-busting
+const timestamp = Date.now();
+
+// Function to process HTML files
+function processHtmlFile(filePath, fileName) {
+    let content = fs.readFileSync(filePath, 'utf8');
+
+    // Add cache-busting parameter to script tags
+    content = content.replace(/contact-widget\.js(\?v=\d+)?/g, `contact-widget.js?v=${timestamp}`);
+    console.log(`Added cache-busting parameter to contact-widget.js references in ${fileName}`);
+
+    // Replace placeholder URLs with actual Netlify site URL
+    if (netlifyUrl) {
+        content = content.replace(/\{\{NETLIFY_SITE_URL\}\}/g, netlifyUrl);
+        console.log(`${fileName} URLs updated with:`, netlifyUrl);
+    } else {
+        console.warn(`Warning: No Netlify site URL found. Placeholder URLs will remain in ${fileName}.`);
+        console.warn('Make sure to set URL, DEPLOY_URL, or SITE_URL environment variable.');
+    }
+
+    // Write the updated file
+    fs.writeFileSync(filePath, content);
+    return fileName;
+}
+
+// Process contact-widget.js file
 const widgetPath = path.join(__dirname, 'public', 'contact-widget.js');
 let widgetContent = fs.readFileSync(widgetPath, 'utf8');
 
@@ -59,29 +84,24 @@ widgetContent = widgetContent.replace(
 // Write the updated widget file
 fs.writeFileSync(widgetPath, widgetContent);
 
-// Now process the HTML file
-const htmlPath = path.join(__dirname, 'public', 'index.html');
-let htmlContent = fs.readFileSync(htmlPath, 'utf8');
+// Process HTML files
+const htmlFiles = [
+    { path: path.join(__dirname, 'public', 'index.html'), name: 'index.html' },
+    { path: path.join(__dirname, 'public', 'example.html'), name: 'example.html' }
+];
 
-// Add cache-busting parameter to script tags in HTML
-const timestamp = Date.now();
-htmlContent = htmlContent.replace(/contact-widget\.js(\?v=\d+)?/g, `contact-widget.js?v=${timestamp}`);
-console.log('Added cache-busting parameter to contact-widget.js references');
+const processedFiles = ['contact-widget.js'];
 
-// Replace placeholder URLs with actual Netlify site URL
-if (netlifyUrl) {
-    htmlContent = htmlContent.replace(/\{\{NETLIFY_SITE_URL\}\}/g, netlifyUrl);
-    console.log('HTML file URLs updated with:', netlifyUrl);
-} else {
-    console.warn('Warning: No Netlify site URL found. Placeholder URLs will remain in HTML file.');
-    console.warn('Make sure to set URL, DEPLOY_URL, or SITE_URL environment variable.');
-}
-
-// Write the updated HTML file
-fs.writeFileSync(htmlPath, htmlContent);
-
+// Process each HTML file
+htmlFiles.forEach(file => {
+    try {
+        const fileName = processHtmlFile(file.path, file.name);
+        processedFiles.push(fileName);
+    } catch (error) {
+        console.error(`Error processing ${file.name}:`, error.message);
+    }
+});
 
 console.log('Environment variables injected successfully!');
 console.log('Files updated:');
-console.log('- contact-widget.js');
-console.log('- index.html');
+processedFiles.forEach(file => console.log(`- ${file}`));
