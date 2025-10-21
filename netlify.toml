@@ -5,7 +5,9 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
+# Headers for API functions
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
@@ -13,10 +15,66 @@
     Access-Control-Allow-Headers = "Content-Type, Authorization, X-Requested-With"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
     Access-Control-Max-Age = "86400"
+    Cache-Control = "no-cache"
 
-# Environment configuration for development
+# Headers for static assets
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "application/javascript"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "text/css"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "image/png"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "image/svg+xml"
+
+# Redirects for clean URLs
+[[redirects]]
+  from = "/widget"
+  to = "/contact-widget.min.js"
+  status = 302
+  force = false
+
+[[redirects]]
+  from = "/widget.js"
+  to = "/contact-widget.min.js"
+  status = 302
+  force = false
+
+# Environment configuration for different contexts
 [context.dev.environment]
   NODE_ENV = "development"
+  BUILD_MODE = "dev"
+
+[context.branch-deploy.environment]
+  NODE_ENV = "development"
+  BUILD_MODE = "dev"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "production"
+  BUILD_MODE = "production"
 
 [context.production.environment]
   NODE_ENV = "production"
+  BUILD_MODE = "minified"
+
+# Build settings for different contexts
+[context.dev.build]
+  command = "npm run build:dev"
+
+[context.production.build]
+  command = "npm run build:minified"
