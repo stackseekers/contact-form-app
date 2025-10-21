@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Netlify environment variables
-const netlifyUrl = process.env.URL || process.env.DEPLOY_URL || process.env.SITE_URL || 'https://contact-form-app.stackseekers.com';
+const netlifyUrl = process.env.URL || process.env.DEPLOY_URL || process.env.SITE_URL;
 const recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY || '';
 
 console.log('Injecting Netlify environment variables...');

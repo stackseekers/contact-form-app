@@ -1,25 +1,18 @@
-// Contact Form Widget - Configurable JavaScript Embed Version
-// This script creates a contact form widget that can be embedded on any website with customizable fields
-
 (function () {
     'use strict';
 
-    // Default configuration
     const DEFAULT_CONFIG = {
-        // API endpoint - Automatically detects current domain
         apiUrl: (() => {
-            // Netlify environment variables injected at build time
-            const netlifySiteUrl = 'https://contact-form-app.stackseekers.com';
-            
+            const netlifySiteUrl = '{{NETLIFY_SITE_URL}}';
+
             if (netlifySiteUrl) {
                 console.log('Netlify site URL from build injection:', netlifySiteUrl);
                 return netlifySiteUrl + '/.netlify/functions/submit-contact';
             }
-            
-            // Error case - no environment variables available
+
             console.error('Could not detect Netlify site URL. Make sure the build process injected the environment variables.');
             return 'NETLIFY_SITE_URL_NOT_DETECTED/.netlify/functions/submit-contact';
-})(),
+        })(),
 
         // Widget styling options
         theme: {
