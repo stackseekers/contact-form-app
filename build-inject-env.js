@@ -80,21 +80,8 @@ if (netlifyUrl) {
 // Write the updated HTML file
 fs.writeFileSync(htmlPath, htmlContent);
 
-// Now process the sitemap.xml file
-const sitemapPath = path.join(__dirname, 'public', 'sitemap.xml');
-let sitemapContent = fs.readFileSync(sitemapPath, 'utf8');
-
-// Replace placeholder URLs with actual Netlify site URL
-if (netlifyUrl) {
-    sitemapContent = sitemapContent.replace(/\{\{NETLIFY_SITE_URL\}\}/g, netlifyUrl);
-    console.log('Sitemap URLs updated with:', netlifyUrl);
-}
-
-// Write the updated sitemap file
-fs.writeFileSync(sitemapPath, sitemapContent);
 
 console.log('Environment variables injected successfully!');
 console.log('Files updated:');
 console.log('- contact-widget.js');
 console.log('- index.html');
-console.log('- sitemap.xml');
